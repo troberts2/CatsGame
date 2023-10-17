@@ -1,0 +1,17 @@
+enemies:
+mario style, keith haring art
+kizzy - poop
+
+goal:
+time limit per level?
+collect ()
+high score?
+save bear
+save the prince(me)
+
+powerups:
+drive jepeta
+throw corndogs maybe attack not powerup
+
+attack:
+jump on enemies
