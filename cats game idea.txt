@@ -1,6 +1,6 @@
 enemies:
-mario style, keith haring art
-kizzy - poop
+mario style, keith haring art x
+kizzy flying - poop
 
 goal:
 time limit per level?
@@ -14,4 +14,6 @@ drive jepeta
 throw corndogs maybe attack not powerup
 
 attack:
-jump on enemies
+dance moves
+
+landscape:
