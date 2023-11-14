@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public Rigidbody2D rb;
+    private Rigidbody2D rb;
     public float moveSpeed;
     public float jumpForce;
     public float dashForce;
@@ -21,15 +21,20 @@ public class PlayerMovement : MonoBehaviour
     private InputAction move;
     private InputAction jump;
     private InputAction dash;
+    private Animator animator;
 
     void Awake(){
         playerControls = new PlayerInputActions();
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     private void OnEnable(){
         //sets up the playercontrols
         move = playerControls.Player.Move;
         move.Enable();
+        move.performed += MovePerformed;
+        move.canceled += MoveCancelled;
 
         jump = playerControls.Player.Jump;
         jump.Enable();
@@ -43,21 +48,44 @@ public class PlayerMovement : MonoBehaviour
     private void OnDisable(){
         //disables player controls
         move.Disable();
+        move.performed -= MovePerformed;
+        move.canceled -= MoveCancelled;
         jump.Disable();
         dash.Disable();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        moveDir = move.ReadValue<Vector2>();
-    }
     /// <summary>
     /// currently just moves the player
     /// </summary>
     private void FixedUpdate() {
         //basic movement with addforce
         rb.AddForce(new Vector2(moveDir.x * moveSpeed, 0), ForceMode2D.Force);
+        //check for idle
+        if(rb.velocity == Vector2.zero){
+            animator.SetBool("isIdle", true);
+        }
+        else{
+            animator.SetBool("isIdle", false);
+        }
+        //check for is falling
+        if(rb.velocity.y < 0){
+            animator.SetBool("isFalling", true);
+        }else{
+            animator.SetBool("isFalling", false);
+        }
+    }
+    private void MovePerformed(InputAction.CallbackContext callbackContext){
+        moveDir = callbackContext.ReadValue<Vector2>();
+        if(moveDir.x > 0){
+            transform.localScale = Vector2.one;
+        }else{
+            transform.localScale = new Vector2(-1f, 1f);
+        }
+        animator.SetBool("isRunning", true);
+    }
+    private void MoveCancelled(InputAction.CallbackContext callbackContext){
+        moveDir = Vector2.zero;
+        animator.SetBool("isRunning", false);
     }
     /// <summary>
     /// jump functionallity. Jumps as many times as want just change max jump count to as many jumps
@@ -68,6 +96,7 @@ public class PlayerMovement : MonoBehaviour
         if(jumpCount > 0){
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpCount--;
+            animator.SetTrigger("jump");
         }
     }
     /// <summary>
@@ -79,6 +108,7 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("dash");
             rb.AddForce(moveDir * dashForce, ForceMode2D.Impulse);
             dashCount--;
+            animator.SetTrigger("dash");
             StartCoroutine(DashTimer());
             StartCoroutine(DashConstraint());
         }
