@@ -71,6 +71,33 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pencil"",
+                    ""type"": ""Button"",
+                    ""id"": ""9746e7fc-f337-4f3d-8b65-4b5f849845fb"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Sprinkle"",
+                    ""type"": ""Button"",
+                    ""id"": ""a3818f1e-b269-4c15-9caf-f556e17f81d2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Squigle"",
+                    ""type"": ""Button"",
+                    ""id"": ""e329dc7e-a2c8-4cc0-8985-28f1b50ff4c5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -302,6 +329,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse;Gamepad"",
                     ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a6288d8a-6c07-4c9a-b0c7-12dd08b49a68"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse;Gamepad"",
+                    ""action"": ""Pencil"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b07eb938-4739-436c-92f0-b87821f52d35"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse;Gamepad"",
+                    ""action"": ""Sprinkle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f50d1bc6-49e5-4207-b4bb-f06aedc3169c"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse;Gamepad"",
+                    ""action"": ""Squigle"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -894,6 +954,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Fire = m_Player.FindAction("Fire", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
+        m_Player_Pencil = m_Player.FindAction("Pencil", throwIfNotFound: true);
+        m_Player_Sprinkle = m_Player.FindAction("Sprinkle", throwIfNotFound: true);
+        m_Player_Squigle = m_Player.FindAction("Squigle", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -972,6 +1035,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Fire;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Dash;
+    private readonly InputAction m_Player_Pencil;
+    private readonly InputAction m_Player_Sprinkle;
+    private readonly InputAction m_Player_Squigle;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -981,6 +1047,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Fire => m_Wrapper.m_Player_Fire;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
+        public InputAction @Pencil => m_Wrapper.m_Player_Pencil;
+        public InputAction @Sprinkle => m_Wrapper.m_Player_Sprinkle;
+        public InputAction @Squigle => m_Wrapper.m_Player_Squigle;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1005,6 +1074,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dash.started += instance.OnDash;
             @Dash.performed += instance.OnDash;
             @Dash.canceled += instance.OnDash;
+            @Pencil.started += instance.OnPencil;
+            @Pencil.performed += instance.OnPencil;
+            @Pencil.canceled += instance.OnPencil;
+            @Sprinkle.started += instance.OnSprinkle;
+            @Sprinkle.performed += instance.OnSprinkle;
+            @Sprinkle.canceled += instance.OnSprinkle;
+            @Squigle.started += instance.OnSquigle;
+            @Squigle.performed += instance.OnSquigle;
+            @Squigle.canceled += instance.OnSquigle;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1024,6 +1102,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Dash.started -= instance.OnDash;
             @Dash.performed -= instance.OnDash;
             @Dash.canceled -= instance.OnDash;
+            @Pencil.started -= instance.OnPencil;
+            @Pencil.performed -= instance.OnPencil;
+            @Pencil.canceled -= instance.OnPencil;
+            @Sprinkle.started -= instance.OnSprinkle;
+            @Sprinkle.performed -= instance.OnSprinkle;
+            @Sprinkle.canceled -= instance.OnSprinkle;
+            @Squigle.started -= instance.OnSquigle;
+            @Squigle.performed -= instance.OnSquigle;
+            @Squigle.canceled -= instance.OnSquigle;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1211,6 +1298,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnFire(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
+        void OnPencil(InputAction.CallbackContext context);
+        void OnSprinkle(InputAction.CallbackContext context);
+        void OnSquigle(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

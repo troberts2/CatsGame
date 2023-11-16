@@ -5,10 +5,52 @@ using UnityEngine;
 
 public class KeithEnemyMovement : MonoBehaviour
 {
-    public Rigidbody2D rb;
+    private Rigidbody2D rb;
+    private BoxCollider2D boxCol;
     public float moveSpeed;
+    private Animator animator;
+    private bool canMove = true;
+    private void Start() {
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        boxCol = GetComponent<BoxCollider2D>();
+    }
 
     private void FixedUpdate(){
-        transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
+        if(canMove){
+            transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
+        }
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.gameObject.CompareTag("playerAttack")){
+            StartCoroutine(Die());
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D other) {
+        if(other.gameObject.CompareTag("Player")){
+            StartCoroutine(BounceBack(other.gameObject));
+        }
+    }
+
+    IEnumerator Die(){
+        animator.SetTrigger("dead");
+        boxCol.enabled = false;
+        canMove = false;
+        rb.AddForce(new Vector2(0, 2f), ForceMode2D.Impulse);
+        yield return new WaitForSeconds(2f);
+        Destroy(gameObject);
+    }
+    IEnumerator BounceBack(GameObject player){
+        canMove = false;
+        rb.isKinematic = false;
+        Vector2 forceDir = gameObject.transform.position - player.transform.position;
+        forceDir *= 4;
+        rb.AddForce(forceDir, ForceMode2D.Impulse);
+        yield return new WaitForSeconds(1f);
+        rb.velocity = Vector2.zero;
+        rb.isKinematic = true;
+        canMove = true;
     }
 }

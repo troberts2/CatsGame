@@ -49,6 +49,33 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Pencil",
+                    "type": "Button",
+                    "id": "9746e7fc-f337-4f3d-8b65-4b5f849845fb",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Sprinkle",
+                    "type": "Button",
+                    "id": "a3818f1e-b269-4c15-9caf-f556e17f81d2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Squigle",
+                    "type": "Button",
+                    "id": "e329dc7e-a2c8-4cc0-8985-28f1b50ff4c5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -280,6 +307,39 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse;Gamepad",
                     "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a6288d8a-6c07-4c9a-b0c7-12dd08b49a68",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse;Gamepad",
+                    "action": "Pencil",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b07eb938-4739-436c-92f0-b87821f52d35",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse;Gamepad",
+                    "action": "Sprinkle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f50d1bc6-49e5-4207-b4bb-f06aedc3169c",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse;Gamepad",
+                    "action": "Squigle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

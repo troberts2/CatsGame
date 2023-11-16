@@ -4,9 +4,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
+    //movement and physics;
     private Rigidbody2D rb;
     public float moveSpeed;
     public float jumpForce;
@@ -16,11 +19,25 @@ public class PlayerMovement : MonoBehaviour
     private int jumpCountMax = 2;
     private int dashCount = 2;
     private int dashCountMax = 2;
+    //Player status
+    private int health = 5;
+    private bool iFrames = false;
+
+    //Input actions
     public PlayerInputActions playerControls;
-    Vector2 moveDir = Vector2.zero;
+    private Vector2 moveDir = Vector2.zero;
     private InputAction move;
     private InputAction jump;
     private InputAction dash;
+    private InputAction pencil;
+    private InputAction sprinkle;
+    private InputAction squigle;
+
+    //UI
+    [SerializeField] TextMeshProUGUI healthText;
+    [SerializeField] TextMeshProUGUI scoreText;
+
+    //other
     private Animator animator;
 
     void Awake(){
@@ -43,6 +60,18 @@ public class PlayerMovement : MonoBehaviour
         dash = playerControls.Player.Dash;
         dash.Enable();
         dash.performed += Dash;
+
+        pencil = playerControls.Player.Pencil;
+        pencil.Enable();
+        pencil.performed += Pencil;
+
+        sprinkle = playerControls.Player.Sprinkle;
+        sprinkle.Enable();
+        sprinkle.performed += Sprinkle;
+
+        squigle = playerControls.Player.Squigle;
+        squigle.Enable();
+        squigle.performed += Squigle;
     }
 
     private void OnDisable(){
@@ -52,6 +81,9 @@ public class PlayerMovement : MonoBehaviour
         move.canceled -= MoveCancelled;
         jump.Disable();
         dash.Disable();
+        pencil.Disable();
+        sprinkle.Disable();
+        squigle.Disable();
     }
 
     /// <summary>
@@ -113,6 +145,15 @@ public class PlayerMovement : MonoBehaviour
             StartCoroutine(DashConstraint());
         }
     }
+    private void Pencil(InputAction.CallbackContext callbackContext){
+        animator.SetTrigger("pencilAttack");
+    }
+    private void Sprinkle(InputAction.CallbackContext callbackContext){
+        animator.SetTrigger("sprinkleAttack");
+    }
+    private void Squigle(InputAction.CallbackContext callbackContext){
+        animator.SetTrigger("squigleAttack");
+    }
     /// <summary>
     /// resets the jump count
     /// </summary>
@@ -121,6 +162,16 @@ public class PlayerMovement : MonoBehaviour
         if(other.collider.tag == "ground"){ 
             isGrounded = true;
             jumpCount = jumpCountMax;
+        }
+        if(other.collider.CompareTag("enemy")){
+            if(!iFrames){
+                if(health > 1){
+                    StartCoroutine(TakeDamage());
+                }
+                else{
+                    StartCoroutine(Die());
+                }
+            }
         }
     }
     private void OnCollisionExit2D(Collision2D other) {
@@ -145,5 +196,19 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = 0;
         yield return new WaitForSeconds(.3f);
         rb.gravityScale = tempGravScale;
+    }
+    private IEnumerator TakeDamage(){
+        animator.SetTrigger("hurt");
+        health--;
+        healthText.text = "Health: " + health;
+        iFrames = true;
+        yield return new WaitForSeconds(.5f);
+        iFrames = false;
+    }
+    private IEnumerator Die(){
+        animator.SetTrigger("dead");
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
+        yield return null;
     }
 }
