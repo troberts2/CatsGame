@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
@@ -19,8 +19,10 @@ public class PlayerMovement : MonoBehaviour
     private int jumpCountMax = 2;
     private int dashCount = 2;
     private int dashCountMax = 2;
+    public LayerMask groundLayer;
     //Player status
-    private int health = 5;
+    [SerializeField]private int health = 5;
+    [SerializeField]private int maxHealth = 5;
     private bool iFrames = false;
 
     //Input actions
@@ -34,7 +36,9 @@ public class PlayerMovement : MonoBehaviour
     private InputAction squigle;
 
     //UI
-    [SerializeField] TextMeshProUGUI healthText;
+    public Image[] hearts;
+    [SerializeField] private Sprite fullHeart;
+    [SerializeField] private Sprite emptyHeart;
     [SerializeField] TextMeshProUGUI scoreText;
 
     //other
@@ -86,25 +90,17 @@ public class PlayerMovement : MonoBehaviour
         squigle.Disable();
     }
 
+    private void Update() {
+        checks();
+        UIUpdate();
+    }
+
     /// <summary>
     /// currently just moves the player
     /// </summary>
     private void FixedUpdate() {
         //basic movement with addforce
         rb.AddForce(new Vector2(moveDir.x * moveSpeed, 0), ForceMode2D.Force);
-        //check for idle
-        if(rb.velocity == Vector2.zero){
-            animator.SetBool("isIdle", true);
-        }
-        else{
-            animator.SetBool("isIdle", false);
-        }
-        //check for is falling
-        if(rb.velocity.y < 0){
-            animator.SetBool("isFalling", true);
-        }else{
-            animator.SetBool("isFalling", false);
-        }
     }
     private void MovePerformed(InputAction.CallbackContext callbackContext){
         moveDir = callbackContext.ReadValue<Vector2>();
@@ -125,7 +121,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="context"></param>
     private void Jump(InputAction.CallbackContext context){
-        if(jumpCount > 0){
+        if(jumpCount > 1){
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpCount--;
             animator.SetTrigger("jump");
@@ -159,10 +155,6 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="other"></param>
     private void OnCollisionEnter2D(Collision2D other) {
-        if(other.collider.tag == "ground"){ 
-            isGrounded = true;
-            jumpCount = jumpCountMax;
-        }
         if(other.collider.CompareTag("enemy")){
             if(!iFrames){
                 if(health > 1){
@@ -173,9 +165,6 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
-    }
-    private void OnCollisionExit2D(Collision2D other) {
-        if(other.collider.tag == "ground"){ isGrounded = false;}
     }
     /// <summary>
     /// dash timer and count
@@ -200,7 +189,6 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator TakeDamage(){
         animator.SetTrigger("hurt");
         health--;
-        healthText.text = "Health: " + health;
         iFrames = true;
         yield return new WaitForSeconds(.5f);
         iFrames = false;
@@ -210,5 +198,55 @@ public class PlayerMovement : MonoBehaviour
         Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
         yield return null;
+    }
+    bool IsGrounded() {
+        Vector2 position = transform.position;
+        Vector2 direction = Vector2.down;
+        float distance = 1.0f;
+        
+        RaycastHit2D hit = Physics2D.Raycast(position, direction, distance, groundLayer);
+        if (hit.collider != null) {
+            return true;
+        }
+        
+        return false;
+    }
+    private void checks(){
+        //check for idle
+        if(rb.velocity == Vector2.zero){
+            animator.SetBool("isIdle", true);
+        }
+        else{
+            animator.SetBool("isIdle", false);
+        }
+        //check for is falling
+        if(rb.velocity.y < 0 && !IsGrounded()){
+            animator.SetBool("isFalling", true);
+        }else{
+            animator.SetBool("isFalling", false);
+        }
+        //Reset jump amount
+        if(IsGrounded()){
+            jumpCount = jumpCountMax;
+        }
+    }
+    private void UIUpdate(){
+
+        if(health > maxHealth){
+            health = maxHealth;
+        }
+        for(int i = 0; i < hearts.Length; i++){
+
+            if(i < health){
+                hearts[i].sprite = fullHeart;
+            }else{
+                hearts[i].sprite = emptyHeart;
+            }
+            if(i < maxHealth){
+                hearts[i].enabled = true;
+            }else{
+                hearts[i].enabled = false;
+            }
+        }
     }
 }
