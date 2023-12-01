@@ -9,7 +9,7 @@ public class KeithEnemyMovement : MonoBehaviour
     private BoxCollider2D boxCol;
     public float moveSpeed;
     private Animator animator;
-    private bool canMove = true;
+    private bool canMove = false;
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -17,6 +17,9 @@ public class KeithEnemyMovement : MonoBehaviour
     }
 
     private void FixedUpdate(){
+        if(Vector2.Distance(transform.position, FindObjectOfType<PlayerMovement>().transform.position) < 15 && Vector2.Distance(transform.position, FindObjectOfType<PlayerMovement>().transform.position) > 9){
+            canMove = true;
+        }
         if(canMove){
             transform.Translate(Vector3.left * moveSpeed * Time.deltaTime);
         }
@@ -37,7 +40,9 @@ public class KeithEnemyMovement : MonoBehaviour
     IEnumerator Die(){
         animator.SetTrigger("dead");
         boxCol.enabled = false;
+        rb.isKinematic = false;
         canMove = false;
+        rb.constraints = RigidbodyConstraints2D.None;
         rb.AddForce(new Vector2(0, 2f), ForceMode2D.Impulse);
         yield return new WaitForSeconds(2f);
         Destroy(gameObject);

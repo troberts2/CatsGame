@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -27,7 +28,7 @@ public class PlayerMovement : MonoBehaviour
 
     //Input actions
     public PlayerInputActions playerControls;
-    private Vector2 moveDir = Vector2.zero;
+    internal Vector2 moveDir = Vector2.zero;
     private InputAction move;
     private InputAction jump;
     private InputAction dash;
@@ -43,8 +44,14 @@ public class PlayerMovement : MonoBehaviour
 
     //other
     private Animator animator;
+    
+    //references
+    private beanManager bm;
+    private IDataService DataService = new JsonDataService();
+    private PlayerInfo playerInfo = new PlayerInfo();
 
     void Awake(){
+        bm = FindObjectOfType<beanManager>();
         playerControls = new PlayerInputActions();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
@@ -93,6 +100,12 @@ public class PlayerMovement : MonoBehaviour
     private void Update() {
         checks();
         UIUpdate();
+        if(Input.GetKey(KeyCode.T)){
+            SerializeJson();
+        }
+        if(Input.GetKey(KeyCode.Y)){
+            LoadJson();
+        }
     }
 
     /// <summary>
@@ -166,6 +179,22 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.CompareTag("greenBean")){
+            bm.UpdateBeansUI(other.GetComponent<bean>().id);
+            Destroy(other.gameObject, 0.2f);
+        }
+        if(other.CompareTag("poo")){
+            if(!iFrames){
+                if(health > 1){
+                    StartCoroutine(TakeDamage());
+                }
+                else{
+                    StartCoroutine(Die());
+                }
+            }
+        }
+    }
     /// <summary>
     /// dash timer and count
     /// </summary>
@@ -189,6 +218,7 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator TakeDamage(){
         animator.SetTrigger("hurt");
         health--;
+        playerInfo.health = health;
         iFrames = true;
         yield return new WaitForSeconds(.5f);
         iFrames = false;
@@ -248,5 +278,12 @@ public class PlayerMovement : MonoBehaviour
                 hearts[i].enabled = false;
             }
         }
+    }
+    public void SerializeJson(){
+        DataService.SaveData("/player-stats.json", playerInfo, true);
+    }
+    public void LoadJson(){
+        PlayerInfo data = DataService.LoadData<PlayerInfo>("/player-stats.json", true);
+        health = data.health;
     }
 }

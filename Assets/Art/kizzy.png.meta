@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a2067e5f467265642a336d8436baa197
+guid: 1c384415acddba74e9ae7e9ad5d4188b
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -47,7 +47,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 35
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -68,7 +68,7 @@ TextureImporter:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
-    resizeAlgorithm: 1
+    resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
     compressionQuality: 50
@@ -105,11 +105,11 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: keithHaring_0
+      name: kizzy_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 448
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -119,18 +119,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ec1031fe39e33ec4d9ce36588c9de51c
-      internalID: 1973692740
+      spriteID: a449322963e215d488601504c87ecd98
+      internalID: -1542343056
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: keithHaring_1
+      name: kizzy_1
       rect:
         serializedVersion: 2
         x: 64
-        y: 448
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -140,18 +140,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1fb243f6d94cb7b4882c4eeda2bbadc4
-      internalID: -312193502
+      spriteID: 8d4de94e7dbbf3945b5a8a85d891c2d6
+      internalID: -928906029
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: keithHaring_2
+      name: kizzy_2
       rect:
         serializedVersion: 2
         x: 128
-        y: 448
+        y: 128
         width: 64
         height: 64
       alignment: 0
@@ -161,18 +161,18 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 95fb795a7f9a4c14eb910043b017027c
-      internalID: -1463286417
+      spriteID: 472460bb92e527a43b271b81d8ec0ef5
+      internalID: 1744410399
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: keithHaring_3
+      name: kizzy_3
       rect:
         serializedVersion: 2
-        x: 192
-        y: 448
+        x: 0
+        y: 64
         width: 64
         height: 64
       alignment: 0
@@ -182,29 +182,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: efcc66acb18bd84459a9a55aab2253dc
-      internalID: 1763342822
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: keithHaring_4
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 448
-        width: 64
-        height: 64
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 958894ff3c91e034f9418b6fcce3bb2c
-      internalID: 1174839313
+      spriteID: 0d0d9e167cd21014990e67ce792e2297
+      internalID: -1732798627
       vertices: []
       indices: 
       edges: []
@@ -220,11 +199,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      keithHaring_0: 1973692740
-      keithHaring_1: -312193502
-      keithHaring_2: -1463286417
-      keithHaring_3: 1763342822
-      keithHaring_4: 1174839313
+      kizzy_0: -1542343056
+      kizzy_1: -928906029
+      kizzy_2: 1744410399
+      kizzy_3: -1732798627
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
