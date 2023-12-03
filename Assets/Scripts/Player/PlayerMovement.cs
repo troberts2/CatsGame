@@ -44,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
 
     //other
     private Animator animator;
+    public ParticleSystem dust;
     
     //references
     private beanManager bm;
@@ -119,8 +120,14 @@ public class PlayerMovement : MonoBehaviour
         moveDir = callbackContext.ReadValue<Vector2>();
         if(moveDir.x > 0){
             transform.localScale = Vector2.one;
+            if(IsGrounded()){
+                dust.Play();
+            }
         }else{
             transform.localScale = new Vector2(-1f, 1f);
+            if(IsGrounded()){
+                dust.Play();
+            }
         }
         animator.SetBool("isRunning", true);
     }
@@ -138,6 +145,7 @@ public class PlayerMovement : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
             jumpCount--;
             animator.SetTrigger("jump");
+            dust.Play();
         }
     }
     /// <summary>
@@ -177,6 +185,9 @@ public class PlayerMovement : MonoBehaviour
                     StartCoroutine(Die());
                 }
             }
+        }
+        if(other.collider.CompareTag("ground")){
+            dust.Play();
         }
     }
     private void OnTriggerEnter2D(Collider2D other) {
