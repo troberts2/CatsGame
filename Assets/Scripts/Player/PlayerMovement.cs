@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEditor;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -45,6 +46,10 @@ public class PlayerMovement : MonoBehaviour
     //other
     private Animator animator;
     public ParticleSystem dust;
+    public ParticleSystem blood;
+    public ParticleSystem[] pencilAttack;
+    public ParticleSystem sprinkleAttack;
+    public ParticleSystem[] squigleAttack;
     
     //references
     private beanManager bm;
@@ -164,12 +169,19 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Pencil(InputAction.CallbackContext callbackContext){
         animator.SetTrigger("pencilAttack");
+        foreach(ParticleSystem ps in pencilAttack){
+            ps.Play();
+        }
     }
     private void Sprinkle(InputAction.CallbackContext callbackContext){
         animator.SetTrigger("sprinkleAttack");
+        sprinkleAttack.Play();
     }
     private void Squigle(InputAction.CallbackContext callbackContext){
         animator.SetTrigger("squigleAttack");
+        foreach(ParticleSystem ps in squigleAttack){
+            ps.Play();
+        }
     }
     /// <summary>
     /// resets the jump count
@@ -228,6 +240,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private IEnumerator TakeDamage(){
         animator.SetTrigger("hurt");
+        blood.Play();
         health--;
         playerInfo.health = health;
         iFrames = true;
@@ -236,6 +249,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private IEnumerator Die(){
         animator.SetTrigger("dead");
+        blood.Play();
         Scene scene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(scene.name);
         yield return null;

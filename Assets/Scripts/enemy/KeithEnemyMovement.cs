@@ -10,6 +10,7 @@ public class KeithEnemyMovement : MonoBehaviour
     public float moveSpeed;
     private Animator animator;
     private bool canMove = false;
+    public ParticleSystem blood;
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -39,6 +40,7 @@ public class KeithEnemyMovement : MonoBehaviour
 
     IEnumerator Die(){
         animator.SetTrigger("dead");
+        blood.Play();
         boxCol.enabled = false;
         rb.isKinematic = false;
         canMove = false;

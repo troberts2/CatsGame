@@ -12,6 +12,7 @@ public class Kizzy : MonoBehaviour
     private Animator animator;
     private BoxCollider2D boxCol;
     public GameObject poop;
+    public ParticleSystem blood;
     private void Start(){
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
@@ -53,6 +54,7 @@ public class Kizzy : MonoBehaviour
     }
     IEnumerator Die(){
         animator.SetTrigger("dead");
+        blood.Play();
         boxCol.enabled = false;
         canMove = false;
         rb.gravityScale = 1f;
