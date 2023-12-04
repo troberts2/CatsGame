@@ -98,6 +98,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""c916485e-8846-48b9-b4f0-7aa0cf30f9c7"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -362,6 +371,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse;Gamepad"",
                     ""action"": ""Squigle"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""08922905-28d9-42e4-bf9d-e0e620bbd11f"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse;Gamepad"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5ee0b794-4b9f-49b2-bf9a-5308a36d1282"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0e499967-63e1-4241-ba5c-454547749a2a"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -957,6 +999,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Pencil = m_Player.FindAction("Pencil", throwIfNotFound: true);
         m_Player_Sprinkle = m_Player.FindAction("Sprinkle", throwIfNotFound: true);
         m_Player_Squigle = m_Player.FindAction("Squigle", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1038,6 +1081,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Pencil;
     private readonly InputAction m_Player_Sprinkle;
     private readonly InputAction m_Player_Squigle;
+    private readonly InputAction m_Player_Pause;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1050,6 +1094,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Pencil => m_Wrapper.m_Player_Pencil;
         public InputAction @Sprinkle => m_Wrapper.m_Player_Sprinkle;
         public InputAction @Squigle => m_Wrapper.m_Player_Squigle;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1083,6 +1128,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Squigle.started += instance.OnSquigle;
             @Squigle.performed += instance.OnSquigle;
             @Squigle.canceled += instance.OnSquigle;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1111,6 +1159,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Squigle.started -= instance.OnSquigle;
             @Squigle.performed -= instance.OnSquigle;
             @Squigle.canceled -= instance.OnSquigle;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1301,6 +1352,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnPencil(InputAction.CallbackContext context);
         void OnSprinkle(InputAction.CallbackContext context);
         void OnSquigle(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

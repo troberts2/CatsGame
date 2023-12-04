@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private InputAction pencil;
     private InputAction sprinkle;
     private InputAction squigle;
+    private InputAction pause;
 
     //UI
     public Image[] hearts;
@@ -58,6 +59,9 @@ public class PlayerMovement : MonoBehaviour
     private beanManager bm;
     private IDataService DataService = new JsonDataService();
     private PlayerInfo playerInfo = new PlayerInfo();
+    [HideInInspector]public GameObject pauseMenu;
+    private GameObject optionsMenu;
+    public bool isPaused = false;
 
     void Awake(){
         bm = FindObjectOfType<beanManager>();
@@ -65,6 +69,8 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
+        pauseMenu = transform.GetChild(0).GetChild(0).gameObject;
+        optionsMenu = transform.GetChild(0).GetChild(1).gameObject;
     }
 
     private void OnEnable(){
@@ -93,6 +99,10 @@ public class PlayerMovement : MonoBehaviour
         squigle = playerControls.Player.Squigle;
         squigle.Enable();
         squigle.performed += Squigle;
+        
+        pause = playerControls.Player.Pause;
+        pause.Enable();
+        pause.performed += Pause;
     }
 
     private void OnDisable(){
@@ -105,17 +115,12 @@ public class PlayerMovement : MonoBehaviour
         pencil.Disable();
         sprinkle.Disable();
         squigle.Disable();
+        pause.Disable();
     }
 
     private void Update() {
         checks();
         UIUpdate();
-        if(Input.GetKey(KeyCode.T)){
-            SerializeJson();
-        }
-        if(Input.GetKey(KeyCode.Y)){
-            LoadJson();
-        }
     }
 
     /// <summary>
@@ -126,19 +131,22 @@ public class PlayerMovement : MonoBehaviour
         rb.AddForce(new Vector2(moveDir.x * moveSpeed, 0), ForceMode2D.Force);
     }
     private void MovePerformed(InputAction.CallbackContext callbackContext){
-        moveDir = callbackContext.ReadValue<Vector2>();
-        if(moveDir.x > 0){
-            transform.localScale = Vector2.one;
-            if(IsGrounded()){
-                dust.Play();
+        if(!isPaused){
+            moveDir = callbackContext.ReadValue<Vector2>();
+            if(moveDir.x > 0){
+                transform.localScale = Vector2.one;
+                if(IsGrounded()){
+                    dust.Play();
+                }
+            }else{
+                transform.localScale = new Vector2(-1f, 1f);
+                if(IsGrounded()){
+                    dust.Play();
+                }
             }
-        }else{
-            transform.localScale = new Vector2(-1f, 1f);
-            if(IsGrounded()){
-                dust.Play();
-            }
+            animator.SetBool("isRunning", true); 
         }
-        animator.SetBool("isRunning", true);
+
     }
     private void MoveCancelled(InputAction.CallbackContext callbackContext){
         moveDir = Vector2.zero;
@@ -150,41 +158,71 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     /// <param name="context"></param>
     private void Jump(InputAction.CallbackContext context){
-        if(jumpCount > 1){
-            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            jumpCount--;
-            animator.SetTrigger("jump");
-            dust.Play();
+        if(!isPaused){
+            if(jumpCount > 1){
+                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                jumpCount--;
+                animator.SetTrigger("jump");
+                dust.Play();
+            }
         }
+
     }
     /// <summary>
     /// dash functionallity. Adds force as long as player is moving in a direction
     /// </summary>
     /// <param name="context"></param>
     private void Dash(InputAction.CallbackContext context){
-        if(dashCount > 0 && moveDir != Vector2.zero){
-            Debug.Log("dash");
-            rb.AddForce(moveDir * dashForce, ForceMode2D.Impulse);
-            dashCount--;
-            animator.SetTrigger("dash");
-            StartCoroutine(DashTimer());
-            StartCoroutine(DashConstraint());
+        if(!isPaused){
+            if(dashCount > 0 && moveDir != Vector2.zero){
+                Debug.Log("dash");
+                rb.AddForce(moveDir * dashForce, ForceMode2D.Impulse);
+                dashCount--;
+                animator.SetTrigger("dash");
+                StartCoroutine(DashTimer());
+                StartCoroutine(DashConstraint());
+            }
         }
+
     }
     private void Pencil(InputAction.CallbackContext callbackContext){
-        animator.SetTrigger("pencilAttack");
-        foreach(ParticleSystem ps in pencilAttack){
-            ps.Play();
+        if(!isPaused){
+                animator.SetTrigger("pencilAttack");
+                foreach(ParticleSystem ps in pencilAttack){
+                ps.Play();
+            }
         }
+  
     }
     private void Sprinkle(InputAction.CallbackContext callbackContext){
-        animator.SetTrigger("sprinkleAttack");
-        sprinkleAttack.Play();
+        if(!isPaused){
+            animator.SetTrigger("sprinkleAttack");
+            sprinkleAttack.Play();
+        }
+
     }
     private void Squigle(InputAction.CallbackContext callbackContext){
-        animator.SetTrigger("squigleAttack");
-        foreach(ParticleSystem ps in squigleAttack){
-            ps.Play();
+        if(!isPaused){
+            animator.SetTrigger("squigleAttack");
+            foreach(ParticleSystem ps in squigleAttack){
+                ps.Play();
+            }
+        }
+
+    }
+    private void Pause(InputAction.CallbackContext callbackContext){
+        if(pauseMenu.activeInHierarchy){
+            pauseMenu.SetActive(false);
+            Time.timeScale = 1;
+            isPaused = false;
+        }else if(optionsMenu.activeInHierarchy){
+            pauseMenu.SetActive(true);
+            optionsMenu.SetActive(false);
+        }
+        else{
+            pauseMenu.SetActive(true);
+            Time.timeScale = 0;
+            isPaused = true;
         }
     }
     /// <summary>

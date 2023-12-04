@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: enemyHit
   m_EditorClassIdentifier: 
   impactTime: 0.2
-  impactForce: 0.3
+  impactForce: 0.1
   defaultVelocity: {x: 0.5, y: 0, z: 0}
   impulseCurve:
     serializedVersion: 2
