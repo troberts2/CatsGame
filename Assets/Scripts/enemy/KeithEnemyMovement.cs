@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Cinemachine;
 using UnityEngine;
 
 public class KeithEnemyMovement : MonoBehaviour
@@ -11,10 +12,13 @@ public class KeithEnemyMovement : MonoBehaviour
     private Animator animator;
     private bool canMove = false;
     public ParticleSystem blood;
+    [SerializeField] private ScreenShakeProfile profile;
+    private CinemachineImpulseSource impulseSource;
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         boxCol = GetComponent<BoxCollider2D>();
+        impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
     private void FixedUpdate(){
@@ -41,6 +45,7 @@ public class KeithEnemyMovement : MonoBehaviour
     IEnumerator Die(){
         animator.SetTrigger("dead");
         blood.Play();
+        CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);
         boxCol.enabled = false;
         rb.isKinematic = false;
         canMove = false;

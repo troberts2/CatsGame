@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System;
 using UnityEditor;
+using Cinemachine;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -42,6 +43,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Sprite fullHeart;
     [SerializeField] private Sprite emptyHeart;
     [SerializeField] TextMeshProUGUI scoreText;
+    private CinemachineImpulseSource impulseSource;
+    [SerializeField] private ScreenShakeProfile profile;
 
     //other
     private Animator animator;
@@ -61,6 +64,7 @@ public class PlayerMovement : MonoBehaviour
         playerControls = new PlayerInputActions();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
     private void OnEnable(){
@@ -241,6 +245,8 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator TakeDamage(){
         animator.SetTrigger("hurt");
         blood.Play();
+        //CameraShakeManager.instace.CameraShake(impulseSource);
+        CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);
         health--;
         playerInfo.health = health;
         iFrames = true;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.Animations;
 
@@ -13,10 +14,13 @@ public class Kizzy : MonoBehaviour
     private BoxCollider2D boxCol;
     public GameObject poop;
     public ParticleSystem blood;
+    private CinemachineImpulseSource impulseSource;
+    [SerializeField] private ScreenShakeProfile profile;
     private void Start(){
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         boxCol = GetComponentInChildren<BoxCollider2D>();
+        impulseSource = GetComponentInChildren<CinemachineImpulseSource>();
     }
     private void Awake(){
         StartCoroutine(Poo());
@@ -55,6 +59,7 @@ public class Kizzy : MonoBehaviour
     IEnumerator Die(){
         animator.SetTrigger("dead");
         blood.Play();
+        CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);
         boxCol.enabled = false;
         canMove = false;
         rb.gravityScale = 1f;
