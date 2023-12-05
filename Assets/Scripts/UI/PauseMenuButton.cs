@@ -8,6 +8,7 @@ public class PauseMenuButton : MonoBehaviour
     PlayerMovement pm;
     [SerializeField] private GameObject optionsButton;
 
+
     private void Start() {
         pm = FindObjectOfType<PlayerMovement>();
     }
@@ -22,5 +23,10 @@ public class PauseMenuButton : MonoBehaviour
     }
     public void MainMenu(){
         SceneManager.LoadScene("TitleScreen");
+        Time.timeScale = 1;
+    }
+
+    public void LoadLevelByName(string name){
+        SceneManager.LoadScene(name);
     }
 }
