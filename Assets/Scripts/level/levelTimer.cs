@@ -32,4 +32,8 @@ public class levelTimer : MonoBehaviour
         int seconds = (int)timeToDisplay;
         timerText.text = "" + seconds;
     }
+
+    public void ToggleTimer(){
+        timerIsRunning = !timerIsRunning;
+    }
 }

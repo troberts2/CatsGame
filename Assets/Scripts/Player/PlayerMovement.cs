@@ -259,6 +259,9 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+        if(other.CompareTag("dialogue")){
+            other.GetComponentInChildren<Dialogue>().StartDialogue();
+        }
     }
     /// <summary>
     /// dash timer and count

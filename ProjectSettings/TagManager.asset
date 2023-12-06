@@ -9,6 +9,7 @@ TagManager:
   - enemy
   - greenBean
   - poo
+  - dialogue
   layers:
   - Default
   - TransparentFX
