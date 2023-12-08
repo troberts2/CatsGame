@@ -10,6 +10,7 @@ TagManager:
   - greenBean
   - poo
   - dialogue
+  - secretTiles
   layers:
   - Default
   - TransparentFX
