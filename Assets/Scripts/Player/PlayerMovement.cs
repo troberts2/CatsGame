@@ -48,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private ScreenShakeProfile profile;
 
     //other
-    private Animator animator;
+    internal Animator animator;
     public ParticleSystem dust;
     public ParticleSystem blood;
     public ParticleSystem[] pencilAttack;
@@ -60,6 +60,7 @@ public class PlayerMovement : MonoBehaviour
     private IDataService DataService = new JsonDataService();
     private PlayerInfo playerInfo = new PlayerInfo();
     [HideInInspector]public GameObject pauseMenu;
+    [HideInInspector]public GameObject infoUI;
     private GameObject optionsMenu;
     public bool isPaused = false;
 
@@ -71,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
         impulseSource = GetComponent<CinemachineImpulseSource>();
         pauseMenu = transform.GetChild(0).GetChild(0).gameObject;
         optionsMenu = transform.GetChild(0).GetChild(1).gameObject;
+        infoUI = transform.GetChild(1).gameObject;
     }
 
     private void OnEnable(){

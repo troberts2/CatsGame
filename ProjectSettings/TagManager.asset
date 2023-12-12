@@ -11,6 +11,7 @@ TagManager:
   - poo
   - dialogue
   - secretTiles
+  - end
   layers:
   - Default
   - TransparentFX
