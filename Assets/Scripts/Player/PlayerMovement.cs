@@ -6,9 +6,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-using System;
-using UnityEditor;
 using Cinemachine;
+using System.IO;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -20,12 +19,14 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded;
     private int jumpCount;
     private int jumpCountMax = 2;
+    private Vector2 lastPosJump;
     private int dashCount = 2;
     private int dashCountMax = 2;
     public LayerMask groundLayer;
     //Player status
     [SerializeField]private int health = 5;
     [SerializeField]private int maxHealth = 5;
+    internal int lives = 5;
     private bool iFrames = false;
 
     //Input actions
@@ -43,9 +44,11 @@ public class PlayerMovement : MonoBehaviour
     public Image[] hearts;
     [SerializeField] private Sprite fullHeart;
     [SerializeField] private Sprite emptyHeart;
-    [SerializeField] TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI livesText;
     private CinemachineImpulseSource impulseSource;
     [SerializeField] private ScreenShakeProfile profile;
+    [SerializeField] private GameObject deathScreen;
+    [SerializeField] private GameObject gameoverScreen;
 
     //other
     internal Animator animator;
@@ -73,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
         pauseMenu = transform.GetChild(0).GetChild(0).gameObject;
         optionsMenu = transform.GetChild(0).GetChild(1).gameObject;
         infoUI = transform.GetChild(1).gameObject;
+        LoadJson();
     }
 
     private void OnEnable(){
@@ -245,6 +249,21 @@ public class PlayerMovement : MonoBehaviour
         if(other.collider.CompareTag("ground")){
             dust.Play();
         }
+        if(other.collider.CompareTag("hazard")){
+            transform.position = lastPosJump;
+            if(health > 1){
+                StartCoroutine(TakeDamage());
+            }
+            else{
+                StartCoroutine(Die());
+            }
+
+        }
+    }
+    private void OnCollisionExit2D(Collision2D other) {
+        if(other.collider.CompareTag("ground")){
+            lastPosJump = transform.position;
+        }
     }
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.CompareTag("greenBean")){
@@ -263,6 +282,9 @@ public class PlayerMovement : MonoBehaviour
         }
         if(other.CompareTag("dialogue")){
             other.GetComponentInChildren<Dialogue>().StartDialogue();
+        }
+        if(other.CompareTag("coin")){
+            Destroy(other.gameObject);
         }
     }
     /// <summary>
@@ -299,9 +321,24 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator Die(){
         animator.SetTrigger("dead");
         blood.Play();
-        Scene scene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(scene.name);
-        yield return null;
+        this.enabled = false;
+        yield return new WaitForSeconds(2f);
+        lives--;
+        playerInfo.lives = lives;
+        SerializeJson();
+        infoUI.SetActive(false);
+        rb.gravityScale = 0;
+        GetComponent<BoxCollider2D>().enabled = false;
+        if(lives > 0){
+            deathScreen.SetActive(true);
+        }else{
+            gameoverScreen.SetActive(true);
+            playerInfo.lives = 5;
+            SerializeJson();
+        }
+        // Scene scene = SceneManager.GetActiveScene();
+        // SceneManager.LoadScene(scene.name);
+        // yield return null;
     }
     bool IsGrounded() {
         Vector2 position = transform.position;
@@ -352,12 +389,17 @@ public class PlayerMovement : MonoBehaviour
                 hearts[i].enabled = false;
             }
         }
+        livesText.text = "x " + lives;
     }
     public void SerializeJson(){
-        DataService.SaveData("/player-stats.json", playerInfo, true);
+        DataService.SaveData("/player-stats.json", playerInfo, false);
     }
     public void LoadJson(){
-        PlayerInfo data = DataService.LoadData<PlayerInfo>("/player-stats.json", true);
-        health = data.health;
+        string path = Application.persistentDataPath + "/" + SceneManager.GetActiveScene().name + ".json";
+        if(File.Exists(path)){
+            PlayerInfo data = DataService.LoadData<PlayerInfo>("/player-stats.json", false);
+            lives = data.lives;
+        }
+
     }
 }

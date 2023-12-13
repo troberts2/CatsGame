@@ -29,4 +29,8 @@ public class PauseMenuButton : MonoBehaviour
     public void LoadLevelByName(string name){
         SceneManager.LoadScene(name);
     }
+
+    public void ReloadScene(){
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 }

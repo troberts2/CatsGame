@@ -12,6 +12,8 @@ TagManager:
   - dialogue
   - secretTiles
   - end
+  - hazard
+  - coin
   layers:
   - Default
   - TransparentFX
