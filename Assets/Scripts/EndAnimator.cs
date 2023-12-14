@@ -40,6 +40,7 @@ public class EndAnimator : MonoBehaviour
             }
         }
         levelInfo.beansColl = bm.beanVal;
+        levelInfo.levelBeat = true;
         pm.infoUI.SetActive(false);
         SerializeJson();
     }

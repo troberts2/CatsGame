@@ -49,6 +49,9 @@ public class Kizzy : MonoBehaviour
             if(transform.position.x <= pointB.x) {
                 dirRight = true;
             }
+            if(FindObjectOfType<PlayerMovement>().transform.position.y + 5 < transform.position.y){
+                transform.Translate (Vector2.down * 2f * Time.deltaTime);
+            }
         }
         if(rb.IsSleeping()){
             rb.WakeUp();

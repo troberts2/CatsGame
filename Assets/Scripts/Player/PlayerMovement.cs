@@ -45,6 +45,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Sprite fullHeart;
     [SerializeField] private Sprite emptyHeart;
     [SerializeField] private TextMeshProUGUI livesText;
+    [SerializeField] private TextMeshProUGUI coinsText;
+
     private CinemachineImpulseSource impulseSource;
     [SerializeField] private ScreenShakeProfile profile;
     [SerializeField] private GameObject deathScreen;
@@ -57,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem[] pencilAttack;
     public ParticleSystem sprinkleAttack;
     public ParticleSystem[] squigleAttack;
+    internal int coinNum = 0;
     
     //references
     private beanManager bm;
@@ -166,6 +169,7 @@ public class PlayerMovement : MonoBehaviour
     private void Jump(InputAction.CallbackContext context){
         if(!isPaused){
             if(jumpCount > 1){
+                rb.velocity = new Vector2(rb.velocity.x, 0f);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 jumpCount--;
                 animator.SetTrigger("jump");
@@ -297,6 +301,7 @@ public class PlayerMovement : MonoBehaviour
             other.GetComponentInChildren<Dialogue>().StartDialogue();
         }
         if(other.CompareTag("coin")){
+            coinNum++;
             Destroy(other.gameObject);
         }
     }
@@ -326,7 +331,6 @@ public class PlayerMovement : MonoBehaviour
         //CameraShakeManager.instace.CameraShake(impulseSource);
         CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);
         health--;
-        playerInfo.health = health;
         iFrames = true;
         yield return new WaitForSeconds(.5f);
         iFrames = false;
@@ -336,8 +340,7 @@ public class PlayerMovement : MonoBehaviour
         blood.Play();
         this.enabled = false;
         lives--;
-        playerInfo.lives = lives;
-        SerializeJson();
+        SavePlayer();
         infoUI.SetActive(false);
         rb.gravityScale = 0;
         GetComponent<BoxCollider2D>().enabled = false;
@@ -405,7 +408,8 @@ public class PlayerMovement : MonoBehaviour
                 hearts[i].enabled = false;
             }
         }
-        livesText.text = "x " + lives;
+        livesText.text = "" + lives;
+        coinsText.text = "" + coinNum;
     }
     public void SerializeJson(){
         DataService.SaveData("/player-stats.json", playerInfo, false);
@@ -415,7 +419,12 @@ public class PlayerMovement : MonoBehaviour
         if(File.Exists(path)){
             PlayerInfo data = DataService.LoadData<PlayerInfo>("/player-stats.json", false);
             lives = data.lives;
+            coinNum = data.coins;
         }
-
+    }
+    public void SavePlayer(){
+        playerInfo.lives = lives;
+        playerInfo.coins = coinNum;
+        SerializeJson();
     }
 }

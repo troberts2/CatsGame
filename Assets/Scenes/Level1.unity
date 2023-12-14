@@ -12741,11 +12741,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 279824634, guid: d0abfc2f82e30c64483ae8979a4576c2, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].x
-      value: -12.38367
+      value: -10.224551
       objectReference: {fileID: 0}
     - target: {fileID: 279824634, guid: d0abfc2f82e30c64483ae8979a4576c2, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[1].y
-      value: 11.751261
+      value: 11.722473
+      objectReference: {fileID: 0}
+    - target: {fileID: 279824634, guid: d0abfc2f82e30c64483ae8979a4576c2, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].x
+      value: -10.134996
+      objectReference: {fileID: 0}
+    - target: {fileID: 279824634, guid: d0abfc2f82e30c64483ae8979a4576c2, type: 3}
+      propertyPath: m_Points.m_Paths.Array.data[0].Array.data[2].y
+      value: -7.2073445
       objectReference: {fileID: 0}
     - target: {fileID: 279824634, guid: d0abfc2f82e30c64483ae8979a4576c2, type: 3}
       propertyPath: m_Points.m_Paths.Array.data[0].Array.data[4].x

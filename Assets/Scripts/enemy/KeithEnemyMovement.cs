@@ -65,6 +65,18 @@ public class KeithEnemyMovement : MonoBehaviour
                 isFacingRight = !isFacingRight;
                 transform.localScale = new Vector3(-transform.localScale.x, 1f, 1f);
         }
+        if(other.gameObject.CompareTag("hazard")){
+            animator.SetTrigger("dead");
+            blood.Play();
+            CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);
+            boxCol.enabled = false;
+            rb.isKinematic = false;
+            canMove = false;
+            rb.constraints = RigidbodyConstraints2D.None;
+            rb.velocity = Vector2.zero;
+            rb.AddForce(new Vector2(0, 2f), ForceMode2D.Impulse);
+            Destroy(gameObject, 2f);
+        }
     }
 
     IEnumerator Die(GameObject player){

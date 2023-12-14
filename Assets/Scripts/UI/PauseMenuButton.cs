@@ -22,6 +22,7 @@ public class PauseMenuButton : MonoBehaviour
         pm.pauseMenu.SetActive(false);
     }
     public void MainMenu(){
+        pm.SavePlayer();
         SceneManager.LoadScene("TitleScreen");
         Time.timeScale = 1;
     }
@@ -31,6 +32,7 @@ public class PauseMenuButton : MonoBehaviour
     }
 
     public void ReloadScene(){
+        pm.SavePlayer();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
