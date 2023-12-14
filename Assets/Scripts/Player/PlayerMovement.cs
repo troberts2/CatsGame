@@ -246,6 +246,17 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+        if(other.gameObject.CompareTag("poo")){
+            Destroy(other.gameObject);
+            if(!iFrames){
+                if(health > 1){
+                    StartCoroutine(TakeDamage());
+                }
+                else{
+                    StartCoroutine(Die());
+                }
+            }
+        }
         if(other.collider.CompareTag("ground")){
             dust.Play();
         }
@@ -260,6 +271,18 @@ public class PlayerMovement : MonoBehaviour
 
         }
     }
+    private void OnCollisionStay2D(Collision2D other) {
+        if(other.collider.CompareTag("enemy")){
+            if(!iFrames){
+                if(health > 1){
+                    StartCoroutine(TakeDamage());
+                }
+                else{
+                    StartCoroutine(Die());
+                }
+            }
+        }
+    }
     private void OnCollisionExit2D(Collision2D other) {
         if(other.collider.CompareTag("ground")){
             lastPosJump = transform.position;
@@ -269,16 +292,6 @@ public class PlayerMovement : MonoBehaviour
         if(other.CompareTag("greenBean")){
             bm.UpdateBeansUI(other.GetComponent<bean>().id);
             Destroy(other.gameObject, 0.2f);
-        }
-        if(other.CompareTag("poo")){
-            if(!iFrames){
-                if(health > 1){
-                    StartCoroutine(TakeDamage());
-                }
-                else{
-                    StartCoroutine(Die());
-                }
-            }
         }
         if(other.CompareTag("dialogue")){
             other.GetComponentInChildren<Dialogue>().StartDialogue();
@@ -305,7 +318,7 @@ public class PlayerMovement : MonoBehaviour
         float tempGravScale = rb.gravityScale;
         rb.gravityScale = 0;
         yield return new WaitForSeconds(.3f);
-        rb.gravityScale = tempGravScale;
+        rb.gravityScale = 2;
     }
     private IEnumerator TakeDamage(){
         animator.SetTrigger("hurt");
@@ -322,19 +335,19 @@ public class PlayerMovement : MonoBehaviour
         animator.SetTrigger("dead");
         blood.Play();
         this.enabled = false;
-        yield return new WaitForSeconds(2f);
         lives--;
         playerInfo.lives = lives;
         SerializeJson();
         infoUI.SetActive(false);
         rb.gravityScale = 0;
         GetComponent<BoxCollider2D>().enabled = false;
-        if(lives > 0){
-            deathScreen.SetActive(true);
-        }else{
+        yield return new WaitForSeconds(2f);
+        if(lives < 0){
             gameoverScreen.SetActive(true);
             playerInfo.lives = 5;
             SerializeJson();
+        }else{
+            deathScreen.SetActive(true);
         }
         // Scene scene = SceneManager.GetActiveScene();
         // SceneManager.LoadScene(scene.name);
@@ -345,7 +358,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 direction = Vector2.down;
         float distance = 1.0f;
         
-        RaycastHit2D hit = Physics2D.Raycast(position, direction, distance, groundLayer);
+        RaycastHit2D hit = Physics2D.CircleCast(position, .2f, direction, distance, groundLayer);
         if (hit.collider != null) {
             return true;
         }
@@ -354,6 +367,9 @@ public class PlayerMovement : MonoBehaviour
     }
     private void checks(){
         //check for idle
+        if(rb.velocity.x < .1f && moveDir == Vector2.zero){
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
         if(rb.velocity == Vector2.zero){
             animator.SetBool("isIdle", true);
         }

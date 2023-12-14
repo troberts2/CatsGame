@@ -14,6 +14,7 @@ public class StartAnimator : MonoBehaviour
         yield return new WaitForSeconds(3.5f);
         pm.GetComponent<SpriteRenderer>().enabled = true;
         pm.animator.SetTrigger("dash");
+        transform.SetParent(null);
         yield return new WaitForSeconds(.5f);
         pm.GetComponent<PlayerMovement>().enabled = true;
     }

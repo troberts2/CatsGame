@@ -47,6 +47,9 @@ public class KeithEnemyMovement : MonoBehaviour
                 transform.localScale = new Vector3(-transform.localScale.x, 1f, 1f);
             }
         }
+        if(rb.IsSleeping()){
+            rb.WakeUp();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
@@ -72,6 +75,7 @@ public class KeithEnemyMovement : MonoBehaviour
         rb.isKinematic = false;
         canMove = false;
         rb.constraints = RigidbodyConstraints2D.None;
+        rb.velocity = Vector2.zero;
         rb.AddForce(new Vector2(0, 2f), ForceMode2D.Impulse);
         player.GetComponent<Rigidbody2D>().velocity = new Vector2(player.GetComponent<Rigidbody2D>().velocity.x, 0);
         Vector2 forceDir = player.transform.position - gameObject.transform.position;
@@ -86,10 +90,13 @@ public class KeithEnemyMovement : MonoBehaviour
         rb.isKinematic = false;
         Vector2 forceDir = gameObject.transform.position - player.transform.position;
         forceDir *= 4;
+        rb.velocity = Vector2.zero;
         rb.AddForce(forceDir, ForceMode2D.Impulse);
         yield return new WaitForSeconds(1f);
-        rb.velocity = Vector2.zero;
-        rb.isKinematic = true;
-        canMove = true;
+        if(boxCol.enabled == true){
+            rb.velocity = Vector2.zero;
+            rb.isKinematic = true;
+            canMove = true;
+        }
     }
 }

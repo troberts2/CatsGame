@@ -50,6 +50,9 @@ public class Kizzy : MonoBehaviour
                 dirRight = true;
             }
         }
+        if(rb.IsSleeping()){
+            rb.WakeUp();
+        }
     }
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.CompareTag("playerAttack")){
@@ -64,6 +67,7 @@ public class Kizzy : MonoBehaviour
         canMove = false;
         rb.gravityScale = 1f;
         rb.mass = 1f;
+        rb.velocity = Vector2.zero;
         rb.AddForce(new Vector2(0, 2f), ForceMode2D.Impulse);
         yield return new WaitForSeconds(2f);
         Destroy(gameObject);
