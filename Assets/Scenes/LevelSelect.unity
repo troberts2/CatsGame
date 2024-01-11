@@ -975,7 +975,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 873980601758734437, guid: dd3af43b3939d834fb53eaf19f85f603, type: 3}
       propertyPath: m_text
-      value: Level 4 - ""
+      value: Level 4 - "Whole Lotta Poop"
       objectReference: {fileID: 0}
     - target: {fileID: 873980602006858652, guid: dd3af43b3939d834fb53eaf19f85f603, type: 3}
       propertyPath: m_Pivot.x
@@ -1179,7 +1179,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 873980601758734437, guid: dd3af43b3939d834fb53eaf19f85f603, type: 3}
       propertyPath: m_text
-      value: Level 5 - ""
+      value: Level 5 - "The end is near"
       objectReference: {fileID: 0}
     - target: {fileID: 873980602006858652, guid: dd3af43b3939d834fb53eaf19f85f603, type: 3}
       propertyPath: m_Pivot.x
@@ -2008,6 +2008,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   optionsButton: {fileID: 0}
+  audioManager: {fileID: 0}
 --- !u!224 &1018909311 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 873980602006858652, guid: dd3af43b3939d834fb53eaf19f85f603, type: 3}
