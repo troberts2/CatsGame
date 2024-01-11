@@ -16,11 +16,15 @@ public class Kizzy : MonoBehaviour
     public ParticleSystem blood;
     private CinemachineImpulseSource impulseSource;
     [SerializeField] private ScreenShakeProfile profile;
+    [SerializeField] private GameObject scoreText;
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip enemyHurt;
     private void Start(){
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         boxCol = GetComponentInChildren<BoxCollider2D>();
         impulseSource = GetComponentInChildren<CinemachineImpulseSource>();
+        audioSource = GetComponent<AudioSource>();
     }
     private void Awake(){
         StartCoroutine(Poo());
@@ -63,6 +67,15 @@ public class Kizzy : MonoBehaviour
         }
     }
     IEnumerator Die(){
+        FindObjectOfType<PlayerMovement>().score += 100;
+        audioSource.clip = enemyHurt;
+        audioSource.Play();
+        if(!dirRight){
+            transform.localScale = new Vector3(-transform.localScale.x, 1f, 1f);
+        }
+        scoreText.SetActive(true);
+        scoreText.transform.SetParent(null);
+        Destroy(scoreText, .5f);
         animator.SetTrigger("dead");
         blood.Play();
         CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);

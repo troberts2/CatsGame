@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Cinemachine;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -18,16 +19,26 @@ public class KeithEnemyMovement : MonoBehaviour
     private CinemachineImpulseSource impulseSource;
     private Transform groundCheck;
     private RaycastHit2D hit;
+    private RaycastHit2D wallHit;
     private bool isFacingRight = false;
+    [SerializeField] private GameObject scoreText;
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip enemyHurt;
     private void Start() {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         boxCol = GetComponent<BoxCollider2D>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
         groundCheck = transform.GetChild(0);
+        audioSource = GetComponent<AudioSource>();
     }
     private void Update() {
         hit = Physics2D.Raycast(groundCheck.position, Vector2.down, .2f, groundLayer);
+        if(isFacingRight){
+            wallHit = Physics2D.Raycast(transform.position, Vector2.right, 1.5f, groundLayer);
+        }else{
+            wallHit = Physics2D.Raycast(transform.position, Vector2.left, 1.5f, groundLayer);
+        }
     }
 
     private void FixedUpdate(){
@@ -35,7 +46,7 @@ public class KeithEnemyMovement : MonoBehaviour
             canMove = true;
         }
         if(canMove){
-            if (hit.collider !=  null) {
+            if (hit.collider !=  null && wallHit.collider == null) {
                 if (isFacingRight) {
                     transform.Translate(Vector3.right * moveSpeed * Time.deltaTime);
                 }else {
@@ -80,6 +91,15 @@ public class KeithEnemyMovement : MonoBehaviour
     }
 
     IEnumerator Die(GameObject player){
+        player.GetComponent<PlayerMovement>().score += 100;
+        audioSource.clip = enemyHurt;
+        audioSource.Play();
+        if(isFacingRight){
+            transform.localScale = new Vector3(-transform.localScale.x, 1f, 1f);
+        }
+        scoreText.SetActive(true);
+        scoreText.transform.SetParent(null);
+        Destroy(scoreText, .5f);
         animator.SetTrigger("dead");
         blood.Play();
         CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);

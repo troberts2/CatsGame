@@ -13,6 +13,13 @@ public class PlayerMovement : MonoBehaviour
 {
     //movement and physics;
     private Rigidbody2D rb;
+    private AudioSource audioSource;
+    [SerializeField]private VolumeSettings vs;
+    [SerializeField] private AudioClip jumpSound;
+    [SerializeField] private AudioClip coinCollect;
+    [SerializeField] private AudioClip beanCollect;
+    [SerializeField] private AudioClip playerHurt;
+
     public float moveSpeed;
     public float jumpForce;
     public float dashForce;
@@ -27,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]private int health = 5;
     [SerializeField]private int maxHealth = 5;
     internal int lives = 5;
-    private bool iFrames = false;
+    public bool iFrames = false;
 
     //Input actions
     public PlayerInputActions playerControls;
@@ -60,6 +67,8 @@ public class PlayerMovement : MonoBehaviour
     public ParticleSystem sprinkleAttack;
     public ParticleSystem[] squigleAttack;
     internal int coinNum = 0;
+    internal int score = 0;
+    [SerializeField] private TextMeshProUGUI scoreText;
     
     //references
     private beanManager bm;
@@ -75,6 +84,7 @@ public class PlayerMovement : MonoBehaviour
         playerControls = new PlayerInputActions();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        audioSource = GetComponent<AudioSource>();
         impulseSource = GetComponent<CinemachineImpulseSource>();
         pauseMenu = transform.GetChild(0).GetChild(0).gameObject;
         optionsMenu = transform.GetChild(0).GetChild(1).gameObject;
@@ -169,6 +179,10 @@ public class PlayerMovement : MonoBehaviour
     private void Jump(InputAction.CallbackContext context){
         if(!isPaused){
             if(jumpCount > 1){
+                if(jumpCount == 2){
+                    audioSource.clip = jumpSound;
+                    audioSource.Play();
+                }
                 rb.velocity = new Vector2(rb.velocity.x, 0f);
                 rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 jumpCount--;
@@ -186,6 +200,8 @@ public class PlayerMovement : MonoBehaviour
         if(!isPaused){
             if(dashCount > 0 && moveDir != Vector2.zero){
                 Debug.Log("dash");
+                audioSource.clip = jumpSound;
+                audioSource.Play();
                 rb.AddForce(moveDir * dashForce, ForceMode2D.Impulse);
                 dashCount--;
                 animator.SetTrigger("dash");
@@ -197,6 +213,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Pencil(InputAction.CallbackContext callbackContext){
         if(!isPaused){
+                StartCoroutine(AttackIFrames());
                 animator.SetTrigger("pencilAttack");
                 foreach(ParticleSystem ps in pencilAttack){
                 ps.Play();
@@ -206,6 +223,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Sprinkle(InputAction.CallbackContext callbackContext){
         if(!isPaused){
+            StartCoroutine(AttackIFrames());
             animator.SetTrigger("sprinkleAttack");
             sprinkleAttack.Play();
         }
@@ -213,6 +231,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Squigle(InputAction.CallbackContext callbackContext){
         if(!isPaused){
+            StartCoroutine(AttackIFrames());
             animator.SetTrigger("squigleAttack");
             foreach(ParticleSystem ps in squigleAttack){
                 ps.Play();
@@ -243,7 +262,7 @@ public class PlayerMovement : MonoBehaviour
         if(other.collider.CompareTag("enemy")){
             if(!iFrames){
                 if(health > 1){
-                    StartCoroutine(TakeDamage());
+                    StartCoroutine(TakeDamage(other.collider.gameObject));
                 }
                 else{
                     StartCoroutine(Die());
@@ -254,7 +273,7 @@ public class PlayerMovement : MonoBehaviour
             Destroy(other.gameObject);
             if(!iFrames){
                 if(health > 1){
-                    StartCoroutine(TakeDamage());
+                    StartCoroutine(TakeDamage(other.collider.gameObject));
                 }
                 else{
                     StartCoroutine(Die());
@@ -267,7 +286,7 @@ public class PlayerMovement : MonoBehaviour
         if(other.collider.CompareTag("hazard")){
             transform.position = lastPosJump;
             if(health > 1){
-                StartCoroutine(TakeDamage());
+                StartCoroutine(TakeDamage(other.collider.gameObject));
             }
             else{
                 StartCoroutine(Die());
@@ -279,7 +298,7 @@ public class PlayerMovement : MonoBehaviour
         if(other.collider.CompareTag("enemy")){
             if(!iFrames){
                 if(health > 1){
-                    StartCoroutine(TakeDamage());
+                    StartCoroutine(TakeDamage(other.collider.gameObject));
                 }
                 else{
                     StartCoroutine(Die());
@@ -295,6 +314,8 @@ public class PlayerMovement : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.CompareTag("greenBean")){
             bm.UpdateBeansUI(other.GetComponent<bean>().id);
+            audioSource.clip = beanCollect;
+            audioSource.Play();
             Destroy(other.gameObject, 0.2f);
         }
         if(other.CompareTag("dialogue")){
@@ -302,7 +323,25 @@ public class PlayerMovement : MonoBehaviour
         }
         if(other.CompareTag("coin")){
             coinNum++;
+            audioSource.clip = coinCollect;
+            audioSource.Play();
+            other.transform.GetChild(0).gameObject.SetActive(true);
+            Destroy(other.transform.GetChild(0).gameObject, .5f);
+            other.transform.GetChild(0).gameObject.transform.SetParent(null);
             Destroy(other.gameObject);
+            score+=100;
+        }
+    }
+    private void OnTriggerStay2D(Collider2D other){
+        if(other.CompareTag("enemy")){
+            if(!iFrames){
+                if(health > 1){
+                    StartCoroutine(TakeDamage(other.gameObject));
+                }
+                else{
+                    StartCoroutine(Die());
+                }
+            }
         }
     }
     /// <summary>
@@ -325,13 +364,20 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(.3f);
         rb.gravityScale = 2;
     }
-    private IEnumerator TakeDamage(){
+    private IEnumerator TakeDamage(GameObject enemy){
         animator.SetTrigger("hurt");
         blood.Play();
+        audioSource.clip = playerHurt;
+        audioSource.PlayOneShot(audioSource.clip);
         //CameraShakeManager.instace.CameraShake(impulseSource);
         CameraShakeManager.instace.ScreenShakeFromProfile(profile, impulseSource);
         health--;
         iFrames = true;
+        rb.velocity = new Vector2(rb.velocity.x, 0);
+        Vector2 forceDir = transform.position - enemy.transform.position;
+        forceDir = new Vector2(0, forceDir.y);
+        forceDir *= 6;
+        rb.AddForce(forceDir, ForceMode2D.Impulse);
         yield return new WaitForSeconds(.5f);
         iFrames = false;
     }
@@ -370,7 +416,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void checks(){
         //check for idle
-        if(rb.velocity.x < .1f && moveDir == Vector2.zero){
+        if(rb.velocity.x < .3f && moveDir == Vector2.zero){
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
         if(rb.velocity == Vector2.zero){
@@ -410,6 +456,7 @@ public class PlayerMovement : MonoBehaviour
         }
         livesText.text = "" + lives;
         coinsText.text = "" + coinNum;
+        scoreText.text = "" + score;
     }
     public void SerializeJson(){
         DataService.SaveData("/player-stats.json", playerInfo, false);
@@ -425,6 +472,14 @@ public class PlayerMovement : MonoBehaviour
     public void SavePlayer(){
         playerInfo.lives = lives;
         playerInfo.coins = coinNum;
+        if(score > playerInfo.highScore){
+            playerInfo.highScore = score;
+        }
         SerializeJson();
+    }
+    IEnumerator AttackIFrames(){
+        iFrames = true;
+        yield return new WaitForSeconds(0.1f);
+        iFrames = false;
     }
 }

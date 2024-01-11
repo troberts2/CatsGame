@@ -41,6 +41,7 @@ public class EndAnimator : MonoBehaviour
         }
         levelInfo.beansColl = bm.beanVal;
         levelInfo.levelBeat = true;
+        levelInfo.highScore = pm.score;
         pm.infoUI.SetActive(false);
         SerializeJson();
     }

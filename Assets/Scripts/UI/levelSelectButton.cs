@@ -13,6 +13,10 @@ public class levelSelectButton : MonoBehaviour
     [SerializeField] private string thisLevel;
     private bool unlocked = false;
     private Button button;
+    [SerializeField] private Image[] beans;
+    [SerializeField] private TextMeshProUGUI clearedText;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private Sprite beanClear;
     private void Start() {
         button = GetComponent<Button>();
         LoadJson();
@@ -23,6 +27,20 @@ public class levelSelectButton : MonoBehaviour
         if(File.Exists(path2)){
             LevelInfo dataThis = DataService.LoadData<LevelInfo>("/" + thisLevel + ".json", false);
             button.interactable = true;
+            for(int i = 0; i < beans.Length; i++){
+                if(dataThis.beansColl[i]){
+                    beans[i].sprite = beanClear;
+                }
+            }
+            if(dataThis.levelBeat){
+                clearedText.color = Color.green;
+                clearedText.text = "Cleared";
+            }
+            if(dataThis.highScore > 0){
+                scoreText.text = "High Score: " + dataThis.highScore;
+            }else{
+                scoreText.text = "High Score: 0";
+            }
         }else{
             if(File.Exists(path)){
                 LevelInfo dataPrev = DataService.LoadData<LevelInfo>("/" + prevLevel + ".json", false);

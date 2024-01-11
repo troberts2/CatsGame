@@ -5,4 +5,5 @@ public class PlayerInfo
 {
     public int coins;
     public int lives;
+    public int highScore;
 }

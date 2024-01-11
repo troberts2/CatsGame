@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 
 public class Dialogue : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class Dialogue : MonoBehaviour
 
     private int index;
     private BoxCollider2D box;
-    private GameObject panel;
+    public GameObject panel;
     private PlayerMovement pm;
     private levelTimer lt;
 
@@ -49,6 +50,7 @@ public class Dialogue : MonoBehaviour
         panel.SetActive(true);
         pm.enabled = false;
         lt.ToggleTimer();
+        textComponent.text = string.Empty;
         StartCoroutine(TypeLine());
     }
 
@@ -73,7 +75,7 @@ public class Dialogue : MonoBehaviour
         {
             pm.enabled = true;
             lt.ToggleTimer();
-            gameObject.SetActive(false);
+            panel.SetActive(false);
         }
     }
 }
